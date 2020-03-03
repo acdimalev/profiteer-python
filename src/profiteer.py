@@ -67,7 +67,7 @@ def reset():
 
     should be done at least once before collecting the first sample
     """
-    self.last = _impl.get_time_usec()
+    self.last = _get_time_usec()
 
 
 def sample():
@@ -76,10 +76,10 @@ def sample():
     records the time delta since the previous sample or reset.
     sets of samples are recorded in sampling order.
     """
-    now = _impl.get_time_usec()
-    self.samples[self.set][self.iteration] = _impl.logbin_time(now - self.last)
+    now = _get_time_usec()
+    self.samples[self.set][self.iteration] = _logbin_time(now - self.last)
     self.set = (1 + self.set) % self.SETS
-    self.last = _impl.get_time_usec()
+    self.last = _get_time_usec()
 
 
 def advance():
@@ -105,7 +105,7 @@ def report():
     """print an ASCII-formatted report"""
     for samples in self.samples:
         buckets = [
-            _impl.logbin_population(samples.count(bucket))
+            _logbin_population(samples.count(bucket))
             for bucket in range(22)
         ]
         piles = [
@@ -122,18 +122,17 @@ def report():
     print("       us         ms      ")
 
 
-class _impl:
-    """implementation details"""
+def _get_time_usec():
+    return time.time_ns() // 1000
 
-    def get_time_usec():
-        return time.time_ns() // 1000
 
-    def logbin_time(x):
-        # one bucket, less than a microsecond
-        # ten buckets, microseconds
-        # ten buckets, milliseconds
-        # one bucket, more than a second
-        return min(21, int.bit_length(x))
+def _logbin_time(x):
+    # one bucket, less than a microsecond
+    # ten buckets, microseconds
+    # ten buckets, milliseconds
+    # one bucket, more than a second
+    return min(21, int.bit_length(x))
 
-    def logbin_population(x):
-        return int.bit_length(math.ceil(0b1111 * x / self.ITERATIONS))
+
+def _logbin_population(x):
+    return int.bit_length(math.ceil(0b1111 * x / self.ITERATIONS))
