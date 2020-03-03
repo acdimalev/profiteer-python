@@ -27,7 +27,7 @@ the second histogram shows how long a random sleep takes to run.
 """
 
 
-import math, time
+import math, sys, time
 
 import profiteer as self
 
@@ -136,3 +136,12 @@ def _logbin_time(x):
 
 def _logbin_population(x):
     return int.bit_length(math.ceil(0b1111 * x / self.ITERATIONS))
+
+
+# compatibility
+if sys.version_info[:2] < (3, 7):
+
+    import math
+
+    def _get_time_usec():
+        return math.floor(time.time() * 1_000_000)
