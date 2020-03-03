@@ -13,4 +13,4 @@ python:
 install:
   - pip install .
 script:
-  - python3 examples/demo.py
+  - python examples/demo.py
