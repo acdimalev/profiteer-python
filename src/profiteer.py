@@ -144,4 +144,4 @@ if sys.version_info[:2] < (3, 7):
     import math
 
     def _get_time_usec():
-        return math.floor(time.time() * 1_000_000)
+        return math.floor(time.time() * 1000000)
